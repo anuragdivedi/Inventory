@@ -31,6 +31,22 @@
       color: grey;
     }
 
+    /* width */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #676767;
+}
+
+
     input {
       border: 1px solid lightgrey;
     }
@@ -59,6 +75,7 @@
     .topnav {
       background-color: grey;
       overflow: hidden;
+      height:50px;
     }
 
     .topnav a {
@@ -115,18 +132,20 @@
     }
 
     .output-box {
-      min-height: 500px;
-      margin-top: 50px;
+      height: calc(100vh - 130px) !important;
       background-color: #ababdf;
       height: auto;
       display: flex;
       padding: 20px;
       gap: 20px;
+      overflow-y: hidden;
     }
 
     .left-col {
       width: 30%;
       background-color: #fff;
+      overflow-y: scroll;
+      padding:10px;
     }
 
     .left-col li,
@@ -142,6 +161,7 @@
       .right-col {
       width: 70%;
       background-color: #fff;
+      padding:10px;
     }
     
   </style>
@@ -171,8 +191,9 @@
         
       </div>
       <div class="right-col">
-        <table>
-          <li ng-repeat = "domain in bookList | filter : search">{{domain.HOST_NAME}}</li>
+          <div class="domain-info">
+            <li ng-repeat = "domain in domainDetail | filter : search"> Hostname : {{domain.HOST_NAME}}</li>
+        </div>
         </table>
 
 
@@ -186,32 +207,65 @@
 			$scope.userListIsVisible=false;
       $http.get("/booklist").then(function(response){
           console.log(response);
-          $scope.bookList = response.data.rows;
+          $scope.bookList = [{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{DOMAIN_NAME:'bbb',
+            HOST_NAME:'bbbbbbbbb'
+          },{DOMAIN_NAME:'ccc',
+            HOST_NAME:'ccccccccc'
+          },{DOMAIN_NAME:'ddd',
+            HOST_NAME:'ddddddddd'
+          },{DOMAIN_NAME:'eee',
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          },{
+            DOMAIN_NAME:'aaa',
+            HOST_NAME:'aaaaaaaaa'
+          }];
         })
-        
-    });
-    function getDomainDetails(domain) {
-        console.log(domain)
-        
-        
+        function getDomainDetails(domain) {
+        $scope.domainDetail = $scope.bookList.filter((item)=>{
+          if(item && item.DOMAIN_NAME === domain )
+          return item;
+        })
+        $scope.$apply()
       }
-        // $http({
-        //   method: 'GET',
-        //   url: '/booklist/:id',
-        //   param:{
-        //     id:domain
-        //   }
-        // }).then(function (response) 	//shows current booklist
-        // {
-        //   $scope.bookList = [{ DOMAIN_NAME: '000aaa' },
-        //   { DOMAIN_NAME: 'aaabbbccc' },
-        //   { DOMAIN_NAME: 'bbb' },
-        //   { DOMAIN_NAME: 'cccdddd' },
-        //   { DOMAIN_NAME: 'dddfffaa' },
-        //   { DOMAIN_NAME: 'eee' },
-        //   { DOMAIN_NAME: 'fff' },
-        //   ];
-        // });
+
     
       
     //let searchHostname = '';
@@ -220,8 +274,10 @@
     let leftCol = document.getElementsByClassName('left-col')[0];
     let rightCol = document.getElementsByClassName('right-col')[0];
     let domainTable = document.getElementsByClassName('domain-table')[0];
+    let domainInfo = document.getElementsByClassName('domain-info')[0];
     
     let showDomainList = false;
+    let showDomainInfo = false;
     changeDisplay();
     console.log(searchBox)
     searchBox.addEventListener('input', (e) => {
@@ -236,34 +292,20 @@
     function changeDisplay() {
 
       domainTable.style.display = showDomainList ? 'block' :'none';
+      domainInfo.style.display = showDomainList ? 'block' :'none';
     }
-    // function generateColumn(colName, items) {
-    //   const fragment = document.createDocumentFragment();
-    //   items.forEach((item) => {
-    //     var li = document.createElement('li')
-    //     li.className='hostname'
-    //     li.innerHTML = item
-    //     fragment.appendChild(li)
-    //   })
-    //   colName.appendChild(fragment)
-    // }
-    // generateColumn(leftCol, ['www.google.com', 'www.yahoo.com', 'www.bing.com'])
-    // generateColumn(rightCol, ['www.google.com', 'www.yahoo.com', 'www.bing.com'])
- 
+
     leftCol.addEventListener('click',(e)=>{
       if(e.target.classList.contains('domain-name')) {
-       getDomainDetails(e.target.textContent)
+        getDomainDetails(e.target.textContent)
       }
     })
-    /* event listener*/
 
-		/*	$http.get("/booklist").then(function(response) 	//shows current booklist
-				{
-					$scope.bookList = response.data.rows;
-				}); */
-		
-		
+  });
  </script>
 </body>
 
 </html>
+
+
+
