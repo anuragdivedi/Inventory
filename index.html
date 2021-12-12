@@ -179,6 +179,7 @@
     }
       .right-col {
       width: 70%;
+      overflow-y: scroll;
     }
     
   </style>
@@ -187,10 +188,10 @@
 <body>
   <div class='container' ng-app="libraryApp" ng-controller="libCont">
   <div class="topnav">
-    <a class="active" href="#home">Home </a>
+    <a class="active" href="#booklist">Home </a>
     <a href="#booklist">Environment</a>
-    <a href="#borrow">IOD</a>
-    <a href="#return">MDM</a>
+    <a href="#IOD">IOD</a>
+    <a href="#MDM">MDM</a>
   </div>
   <div class="booklist">
       <div class="search-bar">
@@ -211,13 +212,48 @@
       <div class="right-col">
           <div class="domain-info">
             <li ng-repeat = "domain in domainDetail | filter : search"> Hostname : {{domain.HOST_NAME}}</li>
+            <li ng-repeat = "domain in domainDetail | filter : search"> GW_PORT : {{domain.GW_PORT}}</li>
+            <li ng-repeat = "domain in domainDetail | filter : search"> DOMAIN_DB_ACCOUNT : {{domain.DOMAIN_DB_ACCOUNT}}</li>
+            <li ng-repeat = "domain in domainDetail | filter : search"> Owner_Name : {{domain.OWNER_NAME}}</li>
+            <li ng-repeat = "domain in domainDetail | filter : search"> Custodian_Name : {{domain.CUSTODIAN_NAME}}</li>
+            <li ng-repeat = "domain in domainDetail | filter : search"> Primary IT Contact : {{domain.PRIMARY_CONTACT}}</li>
+            <li ng-repeat = "domain in domainDetail | filter : search"> Cost Center : {{domain.COST_CENTER}}</li>
+            <li ng-repeat = "domain in domainDetail | filter : search"> Business Area : {{domain.VALUE}}</li>
         </div>
-        </table>
+        
 
 
       </div>
     </div>
   </div>
+  <div class="IOD">
+    <div class="search-bar">
+      <input type="text" class="search-box" ng-model="search" maxlength="100" placeholder="Enter ORG name" />
+      <button type="button" class='search-btn'>Search</button>
+    </div>
+    <div class="head">
+      <h2>Organization Name</h2>
+      <h2>Organization Info</h2>
+    </div>
+  <div class="output-box">
+    <div class="left-col">
+        <div class='Org-table'>
+          <li ng-repeat = "Org in IODList | filter : search" class="Org-name" data-id={{Org.ID}}>{{Org.DOMAIN_NAME}}</li>
+        </div>
+      
+    </div>
+    <div class="right-col">
+        <div class="Org-info">
+          <li ng-repeat = "domain in IODDetail | filter : search"> Hostname : {{Org.HOST_NAME}}</li>
+          <li ng-repeat = "domain in IODDetail | filter : search"> GW_PORT : {{Org.GW_PORT}}</li>
+          
+      </div>
+      
+
+
+    </div>
+  </div>
+</div>
   </div>
   <script>
     var app = angular.module("libraryApp", []);
@@ -225,56 +261,7 @@
 			$scope.userListIsVisible=false;
       $http.get("/booklist").then(function(response){
           console.log(response);
-          $scope.bookList = [{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{DOMAIN_NAME:'bbb',
-            HOST_NAME:'bbbbbbbbb'
-          },{DOMAIN_NAME:'ccc',
-            HOST_NAME:'ccccccccc'
-          },{DOMAIN_NAME:'ddd',
-            HOST_NAME:'ddddddddd'
-          },{DOMAIN_NAME:'eee',
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          },{
-            DOMAIN_NAME:'aaa',
-            HOST_NAME:'aaaaaaaaa'
-          }];
+          $scope.bookList = response.data.rows;
         })
         function getDomainDetails(domain) {
         $scope.domainDetail = $scope.bookList.filter((item)=>{
@@ -326,10 +313,68 @@
     })
 
   });
+
+  app.controller("libCont", function($scope, $http) {
+			$scope.userListIsVisible=false;
+      $http.get("/IOD").then(function(response){
+          console.log(response);
+          $scope.IODList = response.data.rows;
+        })
+        function getIODDetails(domain) {
+        $scope.IODDetail = $scope.IODList.filter((item)=>{
+          if(item && item.ORGANIZATION_NAME === domain )
+          return item;
+        })
+        $scope.$apply()
+      }
+
+    
+      
+    //let searchHostname = '';
+    let searchBtn = document.getElementsByClassName('search-btn')[0];
+    let searchBox = document.getElementsByClassName('search-box')[0];
+    let leftCol = document.getElementsByClassName('left-col')[0];
+    let rightCol = document.getElementsByClassName('right-col')[0];
+    let IODTable = document.getElementsByClassName('Org-table')[0];
+    let IODInfo = document.getElementsByClassName('Org-info')[0];
+    
+    let showIODList = false;
+    let showIODInfo = false;
+    changeDisplay();
+    console.log(searchBox)
+    searchBox.addEventListener('input', (e) => {
+      if(e.target.value.length === 0) 
+      showIODList = false;
+      changeDisplay();
+    })
+    searchBtn.addEventListener('click',(e)=>{
+      showIODList = true;
+      changeDisplay();
+    })
+    function changeDisplay() {
+
+      IODTable.style.display = showIODList ? 'block' :'none';
+      IODInfo.style.display = showIODList ? 'block' :'none';
+    }
+    let prevTarget = null;
+    leftCol.addEventListener('click',(e)=>{
+      if(e.target.classList.contains('Org-name')) {
+        console.log(e)
+        getIODDetails(e.target.textContent)
+        if(prevTarget) {
+          prevTarget.classList.remove('active-item');
+        }
+        e.target.classList.add('active-item')
+        prevTarget = e.target;
+      }
+    })
+
+  });
+ 
+  
  </script>
 </body>
 
 </html>
-
 
 
